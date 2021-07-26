@@ -14,8 +14,8 @@ from tensorflow.python.saved_model import saved_model
 
 DATA_FILE = 'sparse_telemetry_volvo.csv'
 
-raw = read_csv(DATA_FILE)\
-        .iloc[:3000, :]
+raw = read_csv(DATA_FILE)
+        #.iloc[:3000, :]
 
 #values = pandas.to_datetime(raw['fmc_date'])
 #values.astype(number)
@@ -55,7 +55,7 @@ history = model.fit(
     x=train_x,
     y=train_y,
     epochs=120,
-    batch_size=50,
+    batch_size=25,
     validation_data=(test_x, test_y),
     verbose=1,
     shuffle=False)
