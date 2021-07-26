@@ -12,9 +12,10 @@ from pandas import read_csv, DataFrame
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from tensorflow.python.saved_model import saved_model
 
-DATA_FILE = 'sample_telemetry_volvo.csv'
+DATA_FILE = 'telemetry_volvo.csv'
 
-raw = read_csv(DATA_FILE, parse_dates=True, index_col=0) \
+#parse_dates=True,
+raw = read_csv(DATA_FILE, index_col=0) \
         .interpolate(method='linear', axis=0)\
         .drop(columns=['total_odometer', 'gsm_signal', 'sped'])\
         .fillna(0)
@@ -66,7 +67,7 @@ history = auto_encoder.fit(
     y=train,
     validation_data=(test, test),
     epochs=150,
-    batch_size=10)
+    batch_size=20)
 
 
 saved_model.save(encoder, 'volvo_encoded_model')
