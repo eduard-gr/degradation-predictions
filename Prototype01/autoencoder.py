@@ -30,21 +30,21 @@ print(source_values.shape)
 
 encoder_input = Input(shape=(40, ))
 
-encoder_layer = Dense(units=30, activation='relu')(encoder_input)
-encoder_layer = Dense(units=20, activation='relu')(encoder_layer)
-encoder_layer = Dense(units=10, activation='relu')(encoder_layer)
-encoder_layer = Dense(units=5, activation='relu')(encoder_layer)
-encoder_layer = Dense(units=1, activation='relu')(encoder_layer)
+encoder_layer = Dense(units=30, activation='sigmoid')(encoder_input)
+encoder_layer = Dense(units=20, activation='sigmoid')(encoder_layer)
+encoder_layer = Dense(units=10, activation='sigmoid')(encoder_layer)
+encoder_layer = Dense(units=5, activation='sigmoid')(encoder_layer)
+encoder_layer = Dense(units=1, activation='sigmoid')(encoder_layer)
 
 encoder = Model(encoder_input, encoder_layer)
 
 decoder_input = Input(shape=(1, ))
 
-decoder_layer = Dense(units=5, activation='relu')(decoder_input)
-decoder_layer = Dense(units=10, activation='relu')(decoder_layer)
-decoder_layer = Dense(units=20, activation='relu')(decoder_layer)
-decoder_layer = Dense(units=30, activation='relu')(decoder_layer)
-decoder_layer = Dense(units=40, activation='relu')(decoder_layer)
+decoder_layer = Dense(units=5, activation='sigmoid')(decoder_input)
+decoder_layer = Dense(units=10, activation='sigmoid')(decoder_layer)
+decoder_layer = Dense(units=20, activation='sigmoid')(decoder_layer)
+decoder_layer = Dense(units=30, activation='sigmoid')(decoder_layer)
+decoder_layer = Dense(units=40, activation='sigmoid')(decoder_layer)
 
 decoder = Model(decoder_input, decoder_layer)
 
@@ -70,8 +70,8 @@ history = auto_encoder.fit(
     batch_size=20)
 
 
-saved_model.save(encoder, 'volvo_encoded_model')
-saved_model.save(decoder, 'volvo_decoder_model')
+saved_model.save(encoder, 'volvo_encoded_model_sigmoid')
+saved_model.save(decoder, 'volvo_decoder_model_sigmoid')
 
 #lstm_model = saved_model.load('volvo_model')
 
