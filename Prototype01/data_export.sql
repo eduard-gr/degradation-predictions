@@ -1,6 +1,6 @@
 CREATE TEMPORARY VIEW data_export AS (
     SELECT
-        fmc.fmc_date,
+        EXTRACT(EPOCH FROM fmc.fmc_date)  * 1000 as fmc_date,
 
         fmc.total_odometer,
         fmc.gsm_signal,

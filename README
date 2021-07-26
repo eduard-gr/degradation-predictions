@@ -4,6 +4,13 @@ select * from fm_object_service_motion where fmobj_id = 1323
 Data export
 psql -h localhost -p 5432 -U trackpoint -d trackpoint3x -W -f data_export.sql
 
+
+https://habr.com/ru/post/331382/
+https://neurohive.io/ru/osnovy-data-science/avtojenkoder-tipy-arhitektur-i-primenenie/
+https://ru-keras.com/guide-sequential/
+
+
+
 Nado prochest
 https://keras.io/api/preprocessing/timeseries/
 
