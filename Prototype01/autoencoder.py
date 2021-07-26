@@ -3,13 +3,29 @@ import keras
 import tensorflow as tf
 import os
 
+from sklearn.model_selection import train_test_split
 from tensorflow.python.keras import Input, Model
 from tensorflow.python.keras.layers import Dense
+from numpy import random
 
-EPOCHS = 100
-BATCH_SIZE = 32
-WINDOW_LENGTH = 4
+from pandas import read_csv, DataFrame
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from tensorflow.python.saved_model import saved_model
 
+DATA_FILE = 'sample_telemetry_volvo.csv'
+
+raw = read_csv(DATA_FILE, parse_dates=True, index_col=0) \
+        .interpolate(method='linear', axis=0)\
+        .drop(columns=['total_odometer', 'gsm_signal', 'sped'])\
+        .fillna(0)
+
+source_values = raw.values
+source_values = source_values.astype('float32')
+
+source_values = MinMaxScaler(feature_range=(-1, 1)).fit_transform(source_values)
+#del raw
+
+print(source_values.shape)
 
 encoder_input = Input(shape=(40, ))
 
@@ -41,16 +57,25 @@ auto_encoder = Model(auto_input, decoded)
 auto_encoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 
 auto_encoder.summary()
-#auto_encoder.fit(X, y, epochs=150, batch_size=10)
-#model.add(keras.layers.RepeatVector(window_length, name='encoder_decoder_bridge'))
 
-#model.add(keras.layers.LSTM(16, kernel_initializer='he_uniform', return_sequences=True, name='decoder_1'))
-#model.add(keras.layers.LSTM(32, kernel_initializer='he_uniform', return_sequences=True, name='decoder_2'))
-#model.add(keras.layers.LSTM(64, kernel_initializer='he_uniform', return_sequences=True, name='decoder_3'))
-#model.add(keras.layers.TimeDistributed(keras.layers.Dense(feats)))
 
-#model.compile(loss="mse",optimizer='adam')
+train, test = train_test_split(source_values, test_size=0.2)
 
-#model.build()
-#print(model.summary())
+history = auto_encoder.fit(
+    x=train,
+    y=train,
+    validation_data=(test, test),
+    epochs=150,
+    batch_size=10)
 
+
+saved_model.save(encoder, 'volvo_encoded_model')
+saved_model.save(decoder, 'volvo_decoder_model')
+
+#lstm_model = saved_model.load('volvo_model')
+
+#output_array = encoder.predict(test)
+#print(output_array)
+
+#output_array = auto_encoder.predict(x_test)
+#print(output_array)
