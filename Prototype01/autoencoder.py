@@ -12,9 +12,15 @@ from pandas import read_csv, DataFrame
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from tensorflow.python.saved_model import saved_model
 
+import matplotlib.pyplot as pyplot
+
 DATA_FILE = 'telemetry_volvo.csv'
 
+ENCODER_MODULE = 'volvo_encoded_model_tanh'
+DECODER_MODULE = 'volvo_decoder_model_tanh'
+
 #parse_dates=True,
+#        .iloc[:3000, :]\
 raw = read_csv(DATA_FILE, index_col=0) \
         .interpolate(method='linear', axis=0)\
         .drop(columns=['total_odometer', 'gsm_signal', 'sped'])\
@@ -50,6 +56,7 @@ decoder = Model(decoder_input, decoder_layer)
 
 auto_input = Input(shape=(40, ))
 
+
 encoded = encoder(auto_input)
 decoded = decoder(encoded)
 
@@ -60,18 +67,48 @@ auto_encoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 auto_encoder.summary()
 
 
-train, test = train_test_split(source_values, test_size=0.2)
-
-history = auto_encoder.fit(
-    x=train,
-    y=train,
-    validation_data=(test, test),
-    epochs=150,
-    batch_size=20)
+encoder.load_weights(ENCODER_MODULE)
+decoder.load_weights(DECODER_MODULE)
 
 
-saved_model.save(encoder, 'volvo_encoded_model_tanh')
-saved_model.save(decoder, 'volvo_decoder_model_tanh')
+result = DataFrame(
+    encoder.predict(source_values),
+    columns=['predict'],
+    index=raw.index)
+
+result.to_csv('sparse_telemetry_volvo.csv', index=True, header=True)
+
+#result['engine_rpm'] = raw['engine_rpm']
+#result['speed'] = raw['speed']
+
+
+# figure, plots = pyplot.subplots(
+#     nrows=len(result.columns),
+#     ncols=1,
+#     sharex=True)
+#
+# index=0
+# for column in result:
+#     canvas = plots[index]
+#     canvas.plot(result[column].values)
+#     canvas.set_xlabel(column)
+#     index = index + 1
+#
+# pyplot.show()
+
+#print(result_df.head())
+
+# train, test = train_test_split(source_values, test_size=0.2)
+#
+# history = auto_encoder.fit(
+#     x=train,
+#     y=train,
+#     validation_data=(test, test),
+#     epochs=150,
+#     batch_size=20)
+
+#saved_model.save(encoder, 'volvo_encoded_model_tanh')
+#saved_model.save(decoder, 'volvo_decoder_model_tanh')
 
 #lstm_model = saved_model.load('volvo_model')
 
