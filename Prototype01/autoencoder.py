@@ -29,6 +29,7 @@ raw = read_csv(DATA_FILE, index_col=0) \
 source_values = raw.values
 source_values = source_values.astype('float32')
 
+#Primenit metod zscoringa https://www.statology.org/z-score-python/
 source_values = MinMaxScaler(feature_range=(-1, 1)).fit_transform(source_values)
 #del raw
 
