@@ -1,34 +1,64 @@
 import pandas as pandas
 import matplotlib.pyplot as pyplot
 from matplotlib.backends.backend_pdf import PdfPages
+from pandas import read_csv, DataFrame
+from scipy.stats import stats
 
-#df = pd.read_csv('telemetry_volvo.csv', index_col=0).iloc[:3000, :]
-df = pandas\
-        .read_csv('telemetry_1323.csv', index_col=0)\
-        .iloc[:3000, :]\
-        .interpolate(method='linear', axis=0)
-    #.fillna(method="ffill")
-    #.interpolate(method='linear', limit_direction='forward', axis=0)
+DATA_FILE = 'telemetry_volvo.csv'
 
-#df.head()
+df = read_csv(DATA_FILE, index_col=0) \
+        .iloc[:3000, :] \
+        .drop(columns=[
+            'total_odometer',
+            'gsm_signal',
+            'number_of_dtc',
+            'vehicle_speed',
+            'runtime_since_engine_start',
+            'distance_traveled_mil_on',
+            'fuel_level',
+            'distance_since_codes_clear',
+            'absolute_load_value',
+            'time_since_codes_cleared',
+            'absolute_fuel_rail_pressure',
+            'engine_oil_temperature',
+            'fuel_injection_timing',
+            'fuel_rate',
+            'battery_current',
+            'gnss_status',
+            'data_mode',
+            'gnss_pdop',
+            'gnss_hdop',
+            'sleep_mode',
+            'ignition',
+            'movement',
+            'active_gsm_operator',
+            'green_driving_type',
+            'unplug',
+            'green_driving_value',
+            'sped']) \
+        .interpolate(method='linear', axis=0) \
+        .fillna(0)
 
-#print()
+
+#source_values = raw.values
+#source_values = source_values.astype('float32')
+
+#Primenit metod zscoringa https://www.statology.org/z-score-python/
+source_values = stats.zscore(df.values, axis=1)
+
+df = DataFrame(
+    source_values,
+    columns=df.columns,
+    index=df.index)
 
 figure, plots = pyplot.subplots(
-    nrows=len(df.columns),
+    nrows=df.shape[1],
     ncols=1,
     sharex=True,
     figsize=(24, 192))
 
 pyplot.subplots_adjust(hspace=0.5,bottom=0.05,top=0.95)
-
-#
-
-#figure.subplots_adjust(hspace=0.5)
-
 index = 0
-
-#plots[0].plot(df["speed"].values)
 
 for column in df:
     canvas = plots[index]
