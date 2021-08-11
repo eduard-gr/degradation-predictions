@@ -1,0 +1,2 @@
+model_checkpoint_path: "volvo_autoencoder_model_tanh_16"
+all_model_checkpoint_paths: "volvo_autoencoder_model_tanh_16"
