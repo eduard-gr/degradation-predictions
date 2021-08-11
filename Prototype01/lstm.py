@@ -15,14 +15,6 @@ from tensorflow.python.saved_model import saved_model
 DATA_FILE = 'sparse_telemetry_volvo.csv'
 
 raw = read_csv(DATA_FILE)
-        #.iloc[:3000, :]
-
-#values = pandas.to_datetime(raw['fmc_date'])
-#values.astype(number)
-#raw['timestamp'] = values / 1000
-
-#print(raw.head())
-#exit(0)
 
 train_x, test_x = train_test_split(raw['fmc_date'].values, test_size=0.2)
 train_y, test_y = train_test_split(raw['predict'].values, test_size=0.2)
@@ -32,16 +24,17 @@ test_x = test_x.reshape((len(test_x), 1, 1))
 
 #return_state=True,
 model = Sequential()
-model.add(Dense(50, activation='tanh', input_shape=(1, 1)))
-model.add(Dense(50, activation='tanh'))
-model.add(Dense(50, activation='tanh'))
-model.add(Dense(50, activation='tanh'))
-model.add(Dense(50, activation='tanh'))
+activation = 'relu'
+# model.add(Dense(50, activation='tanh', input_shape=(1, 1)))
+# model.add(Dense(50, activation='tanh'))
+# model.add(Dense(50, activation='tanh'))
+# model.add(Dense(50, activation='tanh'))
+# model.add(Dense(50, activation='tanh'))
 
-# model.add(LSTM(50, activation='tanh', return_sequences=True, input_shape=(1, 1)))
-# model.add(LSTM(50, activation='tanh', return_sequences=True))
-# model.add(LSTM(50, activation='tanh', return_sequences=True))
-# model.add(LSTM(50, activation='tanh'))
+model.add(LSTM(50, activation=activation, return_sequences=True, input_shape=(1, 1)))
+model.add(LSTM(50, activation=activation, return_sequences=True))
+model.add(LSTM(50, activation=activation, return_sequences=True))
+model.add(LSTM(50, activation=activation))
 
 model.add(Dense(1))
 
